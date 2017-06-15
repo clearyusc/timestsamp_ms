@@ -5,6 +5,7 @@
 
 'use strict';
 
+var dateformat = require('dateformat');
 var fs = require('fs');
 var express = require('express');
 var app = express();
@@ -56,12 +57,15 @@ function validateDate(type, date, res) {
 
 function returnJSONDateInfo(date, res) {
   var dateObj = {"unix":"","natural":""}
-  dateObj["unix"] = (date.getTime() / 1000).toFixed(0)
+  const unixDateStr = (date.getTime() / 1000).toFixed(0)
+  dateObj["unix"] = unixDateStr
   
-  const naturalDateStr = date.getMonth().toString()+" "
-                        +date.getDay().toString()+", "
-                        +date.getYear().toString()
-  dateObj["natural"] = naturalDateStr
+  const nlDate = new Date(unixDateStr)
+  
+  const nlDateStr = nlDate.getMonth().toString()+" "
+                        +nlDate.getDay().toString()+", "
+                        +nlDate.getYear().toString()
+  dateObj["natural"] = nlDateStr
   console.log("should return: "+JSON.stringify(dateObj))
   res.type('txt').send(JSON.stringify(dateObj))
 }
@@ -74,13 +78,13 @@ app.use(function(req, res, next){
     // Natural Language Date
     
     const nlDate = new Date(decodeURI(dateString))
-    returnJSONDateInfo(nlDate)
+    returnJSONDateInfo(nlDate, res)
     //validateDate("Natural Language Date",nlDate,res)
   } else {
     // Unix Timestamp
     
     const date = new Date(parseInt(dateString)*1000) // convert unix timestamp to date
-    returnJSONDateInfo(date)
+    returnJSONDateInfo(date, res)
     //validateDate("Unix Date",date,res)
   }
   
