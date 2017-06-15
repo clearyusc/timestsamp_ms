@@ -47,8 +47,13 @@ app.route('/')
 
 
 app.use(function(req, res, next){
-  var date = new Date(req.url.toString().trim)
-  res.type('txt').send(date)
+  const dateString = req.url.toString().slice(1) // remove the '/' from the url
+  const date = new Date(dateString)
+  if (date.getTime() > 0) {
+    res.type('txt').send("Valid Unix date! "+date.toString())
+  } else {
+    res.type('txt').send('invalid date! '+date+", dateString = "+dateString)
+  }
   // Respond not found to all the wrong routes
   //res.status(404);
   //res.type('txt').send('Not found');
