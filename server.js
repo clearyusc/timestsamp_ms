@@ -47,7 +47,7 @@ app.route('/')
     })
 
 
-function validateDate(type, date, res) {
+function isValidDate(date) {
   if (date.getTime() > 0) {
       res.type('txt').send("Valid "+type+"date: "+date.toString())
     } else {
@@ -57,16 +57,10 @@ function validateDate(type, date, res) {
 
 function returnJSONDateInfo(date, res) {
   var dateObj = {"unix":"","natural":""}
-  const unixDateStr = (date.getTime() / 1000).toFixed(0)
-  dateObj["unix"] = unixDateStr
   
-  const nlDate = new Date(unixDateStr)
+  dateObj["unix"] = (date.getTime() / 1000).toFixed(0)  
+  dateObj["natural"] = dateformat(date,"mmmm d, yyyy")
   
-  const nlDateStr = nlDate.getMonth().toString()+" "
-                        +nlDate.getDay().toString()+", "
-                        +nlDate.getYear().toString()
-  dateObj["natural"] = nlDateStr
-  console.log("should return: "+JSON.stringify(dateObj))
   res.type('txt').send(JSON.stringify(dateObj))
 }
 
@@ -74,18 +68,22 @@ app.use(function(req, res, next){
   const dateString = req.url.toString().slice(1) // remove the '/' from the url
   
   // Check if it is a unix timestamp or a natural language date:
-  if (isNaN(parseInt(dateString))) {
-    // Natural Language Date
-    
-    const nlDate = new Date(decodeURI(dateString))
-    returnJSONDateInfo(nlDate, res)
-    //validateDate("Natural Language Date",nlDate,res)
-  } else {
-    // Unix Timestamp
-    
-    const date = new Date(parseInt(dateString)*1000) // convert unix timestamp to date
-    returnJSONDateInfo(date, res)
-    //validateDate("Unix Date",date,res)
+  try {
+    if (isNaN(parseInt(dateString))) {
+      // Natural Language Date
+
+      const nlDate = new Date(decodeURI(dateString))
+      returnJSONDateInfo(nlDate, res)
+      
+    } else {
+      // Unix Timestamp
+
+      const date = new Date(parseInt(dateString)*1000) // convert unix timestamp to date
+      returnJSONDateInfo(date, res)    
+    }
+  } catch (e) {
+    console.log("Error: "+e)
+    res.type('txt').send({"unix":null,"natural":null})
   }
   
   
