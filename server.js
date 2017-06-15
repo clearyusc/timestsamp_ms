@@ -27,7 +27,8 @@ app.use('/public', express.static(process.cwd() + '/public'));
 /* I'm adding this code! */
 // TODO Update this later to just generically check, not using /api/:
 app.use('/api/', (req,res,next) => {
-        
+        res.type('txt').send('API!');
+    next();
     })
 
 app.route('/_api/package.json')
@@ -44,10 +45,14 @@ app.route('/')
 		  res.sendFile(process.cwd() + '/views/index.html');
     })
 
-// Respond not found to all the wrong routes
+
 app.use(function(req, res, next){
-  res.status(404);
-  res.type('txt').send('Not found');
+  var date = new Date(req.url.toString().trim)
+  res.type('txt').send(date)
+  // Respond not found to all the wrong routes
+  //res.status(404);
+  //res.type('txt').send('Not found');
+  next();
 });
 
 // Error Middleware
