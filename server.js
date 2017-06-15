@@ -47,16 +47,22 @@ app.route('/')
     })
 
 
+function isValidDateString(dateStr) { 
+  const d = new Date(dateStr).getTime()
+  console.log("input date string = "+dateStr+"....d = "+d)
+  return (new Date(dateStr).getTime() > 0)
+}
+
 function isValidDate(date) {
-  if (date.getTime() > 0) {
-      res.type('txt').send("Valid "+type+"date: "+date.toString())
-    } else {
-      res.type('txt').send("Valid "+type+"date: "+date.toString())
-    }
+  if (date == null) return false
+  
+  return date.getTime() > 0
 }
 
 function returnJSONDateInfo(date, res) {
   var dateObj = {"unix":"","natural":""}
+  
+  if ()
   
   dateObj["unix"] = (date.getTime() / 1000).toFixed(0)  
   dateObj["natural"] = dateformat(date,"mmmm d, yyyy")
@@ -67,24 +73,24 @@ function returnJSONDateInfo(date, res) {
 app.use(function(req, res, next){
   const dateString = req.url.toString().slice(1) // remove the '/' from the url
   
-  // Check if it is a unix timestamp or a natural language date:
-  try {
+  // if (!isValidDateString(dateString)) {
+  //   res.type('txt').send(JSON.stringify({"unix":null,"natural":null}))
+  // } else {
+    // Check if it is a unix timestamp or a natural language date:  
     if (isNaN(parseInt(dateString))) {
       // Natural Language Date
 
       const nlDate = new Date(decodeURI(dateString))
       returnJSONDateInfo(nlDate, res)
-      
+
     } else {
       // Unix Timestamp
 
       const date = new Date(parseInt(dateString)*1000) // convert unix timestamp to date
       returnJSONDateInfo(date, res)    
     }
-  } catch (e) {
-    console.log("Error: "+e)
-    res.type('txt').send({"unix":null,"natural":null})
-  }
+  //}
+
   
   
   // Respond not found to all the wrong routes
