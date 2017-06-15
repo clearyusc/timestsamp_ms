@@ -25,13 +25,6 @@ if (!process.env.DISABLE_XORIGIN) {
 
 app.use('/public', express.static(process.cwd() + '/public'));
 
-/* I'm adding this code! */
-// TODO Update this later to just generically check, not using /api/:
-app.use('/api/', (req,res,next) => {
-        res.type('txt').send('API!');
-    next();
-    })
-
 app.route('/_api/package.json')
   .get(function(req, res, next) {
     console.log('requested');
@@ -46,12 +39,6 @@ app.route('/')
 		  res.sendFile(process.cwd() + '/views/index.html');
     })
 
-
-function isValidDateString(dateStr) { 
-  const d = new Date(dateStr).getTime()
-  console.log("input date string = "+dateStr+"....d = "+d)
-  return (new Date(dateStr).getTime() > 0)
-}
 
 function isValidDate(date) {
   if (date == null) return false
@@ -77,29 +64,20 @@ function returnJSONDateInfo(date, res) {
 app.use(function(req, res, next){
   const dateString = req.url.toString().slice(1) // remove the '/' from the url
   
-  // if (!isValidDateString(dateString)) {
-  //   res.type('txt').send(JSON.stringify({"unix":null,"natural":null}))
-  // } else {
-    // Check if it is a unix timestamp or a natural language date:  
-    if (isNaN(parseInt(dateString))) {
-      // Natural Language Date
+  // Check if it is a unix timestamp or a natural language date:  
+  if (isNaN(parseInt(dateString))) {
+    // Natural Language Date
 
-      const nlDate = new Date(decodeURI(dateString))
-      returnJSONDateInfo(nlDate, res)
+    const nlDate = new Date(decodeURI(dateString))
+    returnJSONDateInfo(nlDate, res)
 
-    } else {
-      // Unix Timestamp
+  } else {
+    // Unix Timestamp
 
-      const date = new Date(Number(dateString)*1000) // convert unix timestamp to date
-      returnJSONDateInfo(date, res)    
-    }
-  //}
+    const date = new Date(Number(dateString)*1000) // convert unix timestamp to date
+    returnJSONDateInfo(date, res)    
+  }
 
-  
-  
-  // Respond not found to all the wrong routes
-  //res.status(404);
-  //res.type('txt').send('Not found');
   next();
 });
 
