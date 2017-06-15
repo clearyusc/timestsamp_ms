@@ -62,12 +62,16 @@ function isValidDate(date) {
 function returnJSONDateInfo(date, res) {
   var dateObj = {"unix":"","natural":""}
   
-  if ()
+  if (isValidDate(date)) {
+    dateObj["unix"] = (date.getTime() / 1000).toFixed(0)  
+    dateObj["natural"] = dateformat(date,"mmmm d, yyyy")
   
-  dateObj["unix"] = (date.getTime() / 1000).toFixed(0)  
-  dateObj["natural"] = dateformat(date,"mmmm d, yyyy")
+  } else {
+    dateObj["unix"] = null
+    dateObj["natural"] = null
+  }
   
-  res.type('txt').send(JSON.stringify(dateObj))
+  res.type('txt').send(JSON.stringify(dateObj))  
 }
 
 app.use(function(req, res, next){
@@ -86,7 +90,7 @@ app.use(function(req, res, next){
     } else {
       // Unix Timestamp
 
-      const date = new Date(parseInt(dateString)*1000) // convert unix timestamp to date
+      const date = new Date(Number(dateString)*1000) // convert unix timestamp to date
       returnJSONDateInfo(date, res)    
     }
   //}
