@@ -48,12 +48,22 @@ app.route('/')
 
 app.use(function(req, res, next){
   const dateString = req.url.toString().slice(1) // remove the '/' from the url
-  const date = new Date(dateString)
-  if (date.getTime() > 0) {
-    res.type('txt').send("Valid Unix date! "+date.toString())
+  
+  // Check if it is a unix timestamp or a natural language date:
+  if (isNaN(parseInt(dateString))) {
+    // Natural Language Date
+    const decodeURI(dateString)
   } else {
+    // Unix Timestamp
+    const date = new Date(parseInt(dateString)*1000) // convert unix timestamp to date
+    if (date.getTime() > 0) {
+      res.type('txt').send("Valid Unix date! "+date.toString())
+    } else {
     res.type('txt').send('invalid date! '+date+", dateString = "+dateString)
+    }
   }
+  
+  
   // Respond not found to all the wrong routes
   //res.status(404);
   //res.type('txt').send('Not found');
