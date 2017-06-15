@@ -46,21 +46,28 @@ app.route('/')
     })
 
 
+function validateDate(type, date, res) {
+  if (date.getTime() > 0) {
+      res.type('txt').send("Valid "+type+"date: "+date.toString())
+    } else {
+      res.type('txt').send("Valid "+type+"date: "+date.toString())
+    }
+}
+
 app.use(function(req, res, next){
   const dateString = req.url.toString().slice(1) // remove the '/' from the url
   
   // Check if it is a unix timestamp or a natural language date:
   if (isNaN(parseInt(dateString))) {
     // Natural Language Date
-    const decodeURI(dateString)
+    
+    const nlDate = new Date(decodeURI(dateString))
+    validateDate("Natural Language Date",nlDate,res)
   } else {
     // Unix Timestamp
+    
     const date = new Date(parseInt(dateString)*1000) // convert unix timestamp to date
-    if (date.getTime() > 0) {
-      res.type('txt').send("Valid Unix date! "+date.toString())
-    } else {
-    res.type('txt').send('invalid date! '+date+", dateString = "+dateString)
-    }
+    validateDate("Unix Date",date,res)
   }
   
   
