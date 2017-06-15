@@ -56,9 +56,11 @@ function validateDate(type, date, res) {
 
 function returnJSONDateInfo(date, res) {
   var dateObj = {}
-  dateObj["unix"] = new Date(date).valueOf().toString()
+  dateObj["unix"] = (date.getTime() / 1000).toFixed(0)
   
-  var naturalDateStr = (date.getMonth()+" "+date.getDay()+", "+date.getYear())
+  var naturalDateStr = date.getMonth().toString()+" "
+                        +date.getDay().toString()+", "
+                        +date.getYear().toString()
   dateObj["natural"] = naturalDateStr
   
   res.type('json').send(dateObj)
