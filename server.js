@@ -24,6 +24,12 @@ if (!process.env.DISABLE_XORIGIN) {
 
 app.use('/public', express.static(process.cwd() + '/public'));
 
+/* I'm adding this code! */
+// TODO Update this later to just generically check, not using /api/:
+app.use('/api/', (req,res,next) => {
+        
+    })
+
 app.route('/_api/package.json')
   .get(function(req, res, next) {
     console.log('requested');
