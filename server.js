@@ -54,6 +54,16 @@ function validateDate(type, date, res) {
     }
 }
 
+function returnJSONDateInfo(date, res) {
+  var dateObj = {}
+  dateObj["unix"] = new Date(date).valueOf().toString()
+  
+  var naturalDateStr = (date.getMonth()+" "+date.getDay()+", "+date.getYear())
+  dateObj["natural"] = naturalDateStr
+  
+  res.type('json').send(dateObj)
+}
+
 app.use(function(req, res, next){
   const dateString = req.url.toString().slice(1) // remove the '/' from the url
   
@@ -62,12 +72,14 @@ app.use(function(req, res, next){
     // Natural Language Date
     
     const nlDate = new Date(decodeURI(dateString))
-    validateDate("Natural Language Date",nlDate,res)
+    returnJSONDateInfo(nlDate)
+    //validateDate("Natural Language Date",nlDate,res)
   } else {
     // Unix Timestamp
     
     const date = new Date(parseInt(dateString)*1000) // convert unix timestamp to date
-    validateDate("Unix Date",date,res)
+    returnJSONDateInfo(date)
+    //validateDate("Unix Date",date,res)
   }
   
   
