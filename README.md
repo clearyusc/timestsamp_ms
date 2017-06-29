@@ -1,5 +1,3 @@
-# Backend Challenges boilerplate - package.json
-
 <h1 class="header">
                 Timestamp Microservice
             </h1>
